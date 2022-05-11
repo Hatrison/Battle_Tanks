@@ -1,3 +1,10 @@
+// Init
+
+function init() {
+  gameZone.innerHTML += `<div class="player" style="left: ${player.x}px; top: ${player.y}px;"></div>`;
+  player.element = document.querySelector('.player');
+};
+
 // Intervals
 
 function intervals() {
@@ -31,6 +38,42 @@ function intervals() {
       };
     };
   }, fps);
+    interval.bullet = setInterval(() => {
+      let bullets = document.querySelectorAll('.bullet');
+      bullets.forEach((bullet) => {
+        let direction = bullet.getAttribute('direction');
+        switch (direction) {
+          case 'up':
+            if (bullet.getBoundingClientRect().top < 0) {
+              bullet.parentNode.removeChild(bullet);
+            } else {
+              bullet.style.top = bullet.getBoundingClientRect().top - bulletModel.speed + 'px';
+            };
+            break;
+          case 'right':
+            if (bullet.getBoundingClientRect().right > gameZone.getBoundingClientRect().width) {
+              bullet.parentNode.removeChild(bullet);
+            } else {
+              bullet.style.left = bullet.getBoundingClientRect().left + bulletModel.speed + 'px';
+            };
+            break;
+          case 'down':
+            if (bullet.getBoundingClientRect().top > gameZone.getBoundingClientRect().height) {
+              bullet.parentNode.removeChild(bullet);
+            } else {
+              bullet.style.top = bullet.getBoundingClientRect().top + bulletModel.speed + 'px';
+            };
+            break;
+          case 'left':
+            if (bullet.getBoundingClientRect().left < 0) {
+              bullet.parentNode.removeChild(bullet);
+            } else {
+              bullet.style.left = bullet.getBoundingClientRect().left - bulletModel.speed + 'px';
+            };
+            break;
+        };
+      });
+    }, fps);
 };
 
 // Controllers
@@ -58,6 +101,9 @@ function controllers() {
         player.run = true;
         player.direction = 'left';
         break;
+      case 32: //shot
+        shot();
+        break;
     };
   });
 
@@ -79,10 +125,23 @@ function controllers() {
   });
 };
 
-// Init
+// Shot
 
-function init() {
-  gameZone.innerHTML += `<div class="player" style="left: ${player.x}px; top: ${player.y}px;"></div>`;
+function shot() {
+  switch (player.direction) {
+    case 'top':
+      gameZone.innerHTML += `<div class="bullet" direction="up" style="left: ${player.x + player.width/2 - bulletModel.width/2}px; top: ${player.y - bulletModel.height}px"></div>`;
+      break;
+    case 'right':
+      gameZone.innerHTML += `<div class="bullet" direction="right" style="left: ${player.x + player.width}px; top: ${player.y + player.height/2 - bulletModel.height/2}px"></div>`;
+      break;
+    case 'bottom':
+      gameZone.innerHTML += `<div class="bullet" direction="down" style="left: ${player.x + player.width/2 - bulletModel.width/2}px; top: ${player.y + player.width}px"></div>`;
+      break;
+    case 'left':
+      gameZone.innerHTML += `<div class="bullet" direction="left" style="left: ${player.x - bulletModel.width}px; top: ${player.y + player.height/2 - bulletModel.height/2}px"></div>`;
+      break;
+  }
   player.element = document.querySelector('.player');
 };
 
@@ -114,6 +173,12 @@ let gameZone = document.querySelector('.game-zone'),
   },
   interval = {
     run: undefined,
+    bullet: undefined,
+  },
+  bulletModel = {
+   speed: 10,
+   width: 12,
+   height: 12,
   };
 
   game();

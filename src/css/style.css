@@ -13,3 +13,11 @@
   background-image: url(../images/tank-my-top.png);
   background-repeat: no-repeat;
 }
+
+.bullet {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background-image: url("../images/bullet.png");
+  background-repeat: no-repeat;
+}
