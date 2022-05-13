@@ -5,6 +5,12 @@ function init() {
   player.element = document.querySelector('.player');
 };
 
+// Random
+
+function random(min, max) {
+  return Math.floor(Math.random() * (max - min + 1) ) + min;
+};
+
 // Intervals
 
 function intervals() {
@@ -38,42 +44,111 @@ function intervals() {
       };
     };
   }, fps);
-    interval.bullet = setInterval(() => {
+  interval.bullet = setInterval(() => {
+    let bullets = document.querySelectorAll('.bullet');
+    bullets.forEach((bullet) => {
+      let direction = bullet.getAttribute('direction');
+      switch (direction) {
+        case 'up':
+          if (bullet.getBoundingClientRect().top < 0) {
+            bullet.parentNode.removeChild(bullet);
+          } else {
+            bullet.style.top = bullet.getBoundingClientRect().top - bulletModel.speed + 'px';
+          };
+          break;
+        case 'right':
+          if (bullet.getBoundingClientRect().right > gameZone.getBoundingClientRect().width) {
+            bullet.parentNode.removeChild(bullet);
+          } else {
+            bullet.style.left = bullet.getBoundingClientRect().left + bulletModel.speed + 'px';
+          };
+          break;
+        case 'down':
+          if (bullet.getBoundingClientRect().top > gameZone.getBoundingClientRect().height) {
+            bullet.parentNode.removeChild(bullet);
+          } else {
+            bullet.style.top = bullet.getBoundingClientRect().top + bulletModel.speed + 'px';
+          };
+          break;
+        case 'left':
+          if (bullet.getBoundingClientRect().left < 0) {
+            bullet.parentNode.removeChild(bullet);
+          } else {
+            bullet.style.left = bullet.getBoundingClientRect().left - bulletModel.speed + 'px';
+          };
+          break;
+      };
+    });
+  }, fps);
+  interval.enemy = setInterval(() => {
+    let enemies = document.querySelectorAll('.enemy');
+    enemies.forEach((enemy) => {
+
       let bullets = document.querySelectorAll('.bullet');
       bullets.forEach((bullet) => {
-        let direction = bullet.getAttribute('direction');
-        switch (direction) {
-          case 'up':
-            if (bullet.getBoundingClientRect().top < 0) {
-              bullet.parentNode.removeChild(bullet);
-            } else {
-              bullet.style.top = bullet.getBoundingClientRect().top - bulletModel.speed + 'px';
-            };
-            break;
-          case 'right':
-            if (bullet.getBoundingClientRect().right > gameZone.getBoundingClientRect().width) {
-              bullet.parentNode.removeChild(bullet);
-            } else {
-              bullet.style.left = bullet.getBoundingClientRect().left + bulletModel.speed + 'px';
-            };
-            break;
-          case 'down':
-            if (bullet.getBoundingClientRect().top > gameZone.getBoundingClientRect().height) {
-              bullet.parentNode.removeChild(bullet);
-            } else {
-              bullet.style.top = bullet.getBoundingClientRect().top + bulletModel.speed + 'px';
-            };
-            break;
-          case 'left':
-            if (bullet.getBoundingClientRect().left < 0) {
-              bullet.parentNode.removeChild(bullet);
-            } else {
-              bullet.style.left = bullet.getBoundingClientRect().left - bulletModel.speed + 'px';
-            };
-            break;
+        if (
+          bullet.getBoundingClientRect().top < enemy.getBoundingClientRect().bottom &&
+          bullet.getBoundingClientRect().left < enemy.getBoundingClientRect().right &&
+          bullet.getBoundingClientRect().right > enemy.getBoundingClientRect().left &&
+          bullet.getBoundingClientRect().bottom > enemy.getBoundingClientRect().top
+        ) {
+          enemy.parentNode.removeChild(enemy);
+          bullet.parentNode.removeChild(bullet);
         };
       });
-    }, fps);
+
+      let direction = enemy.getAttribute('direction');
+      switch (direction) {
+        case 'top':
+          if (enemy.getBoundingClientRect().top <= 0) {
+            enemy.parentNode.removeChild(enemy);
+          } else {
+            enemy.style.top = enemy.getBoundingClientRect().top - enemyModel.speed + 'px';
+          };
+          break;
+        case 'right':
+          if (enemy.getBoundingClientRect().right >= gameZone.getBoundingClientRect().width - 6) {
+            enemy.parentNode.removeChild(enemy);
+          } else {
+            enemy.style.left = enemy.getBoundingClientRect().left + enemyModel.speed + 'px';
+          };
+          break;
+        case 'bottom':
+          if (enemy.getBoundingClientRect().bottom >= gameZone.getBoundingClientRect().height - 6) {
+            enemy.parentNode.removeChild(enemy);
+          } else {
+            enemy.style.top = enemy.getBoundingClientRect().top + enemyModel.speed + 'px';
+          };
+          break;
+        case 'left':
+          if (enemy.getBoundingClientRect().right <= enemyModel.width) {
+            enemy.parentNode.removeChild(enemy);
+          } else {
+            enemy.style.left = enemy.getBoundingClientRect().left - enemyModel.speed + 'px';
+          };
+          break;
+      };
+    });
+  }, fps);
+  interval.generateEnemy = setInterval(() => {
+    let direction = random(1, 4);
+    switch (direction) {
+      case 1: // top
+        gameZone.innerHTML += `<div class="enemy" style="transform: rotate(-90deg); top: ${gameZone.getBoundingClientRect().height - player.height}px; left: ${random(0, (gameZone.getBoundingClientRect().width - enemyModel.width))}px;" direction="top"></div>`;
+        break;
+      case 2: // right
+        gameZone.innerHTML += `<div class="enemy" style="top: ${random(0, (gameZone.getBoundingClientRect().height - enemyModel.height))}px; left: 0px;" direction="right"></div>`;
+        break;
+      case 3:  // bottom
+        gameZone.innerHTML += `<div class="enemy" style="transform: rotate(90deg); top: 0px; left: ${random(0, (gameZone.getBoundingClientRect().width - enemyModel.width))}px;" direction="bottom"></div>`;
+        break;
+      case 4: // left
+        gameZone.innerHTML += `<div class="enemy" style="transform: rotate(180deg); top: ${random(0, (gameZone.getBoundingClientRect().height - enemyModel.height))}px; left: ${gameZone.getBoundingClientRect().width - enemyModel.width}px;" direction="left"></div>`;
+        break;
+    };
+
+    player.element = document.querySelector('.player');
+  }, 1000);
 };
 
 // Controllers
@@ -174,11 +249,18 @@ let gameZone = document.querySelector('.game-zone'),
   interval = {
     run: undefined,
     bullet: undefined,
+    enemy: undefined,
+    generateEnemy: undefined,
   },
   bulletModel = {
    speed: 10,
    width: 12,
    height: 12,
+  },
+  enemyModel = {
+    speed: 3,
+    width: 80,
+    height: 80,
   };
 
   game();
