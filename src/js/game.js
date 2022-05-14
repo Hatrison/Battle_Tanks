@@ -1,8 +1,62 @@
 // Init
 
 function init() {
+  if (player.hitPoints === 0) {
+    player.hitPoints = 2;
+    points = 0;
+    document.querySelector('.player-points').innerText = points;
+  };
+
+  document.querySelector('.game-over').classList.remove('on');
+
+  player.x = gameZone.getBoundingClientRect().width / 2 - player.width / 2;
+  player.y = gameZone.getBoundingClientRect().height / 2 - player.height / 2;
   gameZone.innerHTML += `<div class="player" style="left: ${player.x}px; top: ${player.y}px;"></div>`;
   player.element = document.querySelector('.player');
+
+  switch (player.hitPoints) {
+    case 2:
+      document.querySelector('.life').innerHTML = `<img src="images/heart.png" class="life-img" alt="">`;
+      break;
+    case 1:
+      document.querySelector('.life').innerHTML = `<img src="images/heart-half.png" class="life-img" alt="">`;
+      break;
+    case 0:
+      document.querySelector('.life').innerHTML = `<img src="images/heart-empty.png" class="life-img" alt="">`;
+      break;
+  };
+};
+
+// Death
+
+function death() {
+  let bullets = document.querySelectorAll('.bullet');
+  bullets.forEach((bullet) => bullet.parentNode.removeChild(bullet));
+
+  let enemies = document.querySelectorAll('.enemy');
+  enemies.forEach((enemy) => enemy.parentNode.removeChild(enemy));
+
+  player.element.parentNode.removeChild(player.element);
+  player.hitPoints -= 1;
+
+  clearInterval(interval.run);
+  clearInterval(interval.bullet);
+  clearInterval(interval.enemy);
+  clearInterval(interval.createEnemy);
+
+  document.removeEventListener('keydown', shooting, false);
+  
+  if (player.hitPoints === 0) {
+      return gameOver();
+  };
+
+  game();
+};
+
+// Game Over
+
+function gameOver() {
+  document.querySelector('.game-over').classList.add('on');
 };
 
 // Random
@@ -19,25 +73,25 @@ function intervals() {
       switch (player.direction) {
         case 'top':
           if (player.y > 0) {
-            player.y -= player.step;
+            player.y -= player.speed;
             player.element.style.top = `${player.y}px`;
           };
           break;
         case 'right':
           if (player.x < gameZone.getBoundingClientRect().right - player.width - 6) {
-            player.x += player.step;
+            player.x += player.speed;
             player.element.style.left = `${player.x}px`;
           };
           break;
         case 'bottom':
           if (player.y < gameZone.getBoundingClientRect().bottom - player.height - 7) {
-           player.y += player.step;
+           player.y += player.speed;
            player.element.style.top = `${player.y}px`; 
           };
           break;
         case 'left':
           if (player.x > 0) {
-            player.x -= player.step;
+            player.x -= player.speed;
             player.element.style.left = `${player.x}px`;
           };
           break;
@@ -57,14 +111,14 @@ function intervals() {
           };
           break;
         case 'right':
-          if (bullet.getBoundingClientRect().right > gameZone.getBoundingClientRect().width) {
+          if (bullet.getBoundingClientRect().right > gameZone.getBoundingClientRect().width - 6) {
             bullet.parentNode.removeChild(bullet);
           } else {
             bullet.style.left = bullet.getBoundingClientRect().left + bulletModel.speed + 'px';
           };
           break;
         case 'down':
-          if (bullet.getBoundingClientRect().top > gameZone.getBoundingClientRect().height) {
+          if (bullet.getBoundingClientRect().top > gameZone.getBoundingClientRect().height - 17) {
             bullet.parentNode.removeChild(bullet);
           } else {
             bullet.style.top = bullet.getBoundingClientRect().top + bulletModel.speed + 'px';
@@ -84,6 +138,15 @@ function intervals() {
     let enemies = document.querySelectorAll('.enemy');
     enemies.forEach((enemy) => {
 
+      if (
+        player.element.getBoundingClientRect().top < enemy.getBoundingClientRect().bottom &&
+        player.element.getBoundingClientRect().left < enemy.getBoundingClientRect().right &&
+        player.element.getBoundingClientRect().right > enemy.getBoundingClientRect().left &&
+        player.element.getBoundingClientRect().bottom > enemy.getBoundingClientRect().top
+      ) {
+        death();
+      };
+
       let bullets = document.querySelectorAll('.bullet');
       bullets.forEach((bullet) => {
         if (
@@ -94,6 +157,8 @@ function intervals() {
         ) {
           enemy.parentNode.removeChild(enemy);
           bullet.parentNode.removeChild(bullet);
+          points += 1;
+          document.querySelector('.player-points').innerText = points;
         };
       });
 
@@ -130,7 +195,7 @@ function intervals() {
       };
     });
   }, fps);
-  interval.generateEnemy = setInterval(() => {
+  interval.createEnemy = setInterval(() => {
     let direction = random(1, 4);
     switch (direction) {
       case 1: // top
@@ -148,7 +213,7 @@ function intervals() {
     };
 
     player.element = document.querySelector('.player');
-  }, 1000);
+  }, 3000);
 };
 
 // Controllers
@@ -176,9 +241,6 @@ function controllers() {
         player.run = true;
         player.direction = 'left';
         break;
-      case 32: //shot
-        shot();
-        break;
     };
   });
 
@@ -201,6 +263,15 @@ function controllers() {
 };
 
 // Shot
+
+function shooting(event) {
+  console.log(event.keyCode);
+  if (event.keyCode == 32) {
+    shot();
+  };
+};
+
+document.addEventListener('keydown', shooting, false);
 
 function shot() {
   switch (player.direction) {
@@ -226,10 +297,12 @@ function game() {
   init();
   controllers();
   intervals();
+  document.addEventListener('keydown', shooting, false);
 };
 
 let gameZone = document.querySelector('.game-zone'),
   fps = 1000 / 60,
+  points = 0,
   player = {
     styles: {
       top: 'images/tank-my-top.png',
@@ -237,20 +310,21 @@ let gameZone = document.querySelector('.game-zone'),
       bottom: 'images/tank-my-bottom.png',
       left: 'images/tank-my-left.png',
     },
-    element: undefined,
-    x: 700,
-    y: 300,
-    step: 10,
+    element: null,
+    x: null,
+    y: null,
+    speed: 10,
     run: false,
     direction: top, // top, rihgt, bottom, left
     width: 80,
     height: 80,
+    hitPoints: 2,
   },
   interval = {
-    run: undefined,
-    bullet: undefined,
-    enemy: undefined,
-    generateEnemy: undefined,
+    run: null,
+    bullet: null,
+    enemy: null,
+    createEnemy: null,
   },
   bulletModel = {
    speed: 10,
