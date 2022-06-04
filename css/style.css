@@ -45,14 +45,25 @@
   left: 10px;
   top: 10px;
   display: flex;
+  z-index: 999;
 }
 
 .info {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(3px);
+  -webkit-text-stroke: 0.25px rgb(255, 255, 255);
+  -webkit-text-fill-color: rgb(0, 0, 0);
+  width: 100%;
+  height: 100%;
   width: 250px;
   padding: 20px;
   border: 2px solid #000;
-  font-size: 20px;
+  font-size: 25px;
   margin-right: 20px;
+}
+
+.name {
+  display: block;
 }
 
 .points {
@@ -65,7 +76,8 @@
 }
 
 .game-over {
-  background-image: url('../images/bg-game-over.png');
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
   background-repeat: no-repeat;
   background-size: cover;
   position: absolute;
@@ -97,6 +109,14 @@
   text-transform: uppercase;
   margin-left: auto;
   margin-right: auto;
+}
+
+.game-over-points {
+  display: block;
+  text-transform: uppercase;
+  margin-left: 27%;
+  margin-right: -73%;
+  font-size: 36px;
 }
 
 .restart-text {

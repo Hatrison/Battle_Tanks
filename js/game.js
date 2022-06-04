@@ -1,6 +1,4 @@
-// Init
-
-function init() {
+const init = () => {
   if (player.hitPoints === 0) {
     player.hitPoints = 2;
     points = 0;
@@ -21,15 +19,11 @@ function init() {
     case 1:
       document.querySelector('.life').innerHTML = `<img src="images/heart-half.png" class="life-img" alt="">`;
       break;
-    case 0:
-      document.querySelector('.life').innerHTML = `<img src="images/heart-empty.png" class="life-img" alt="">`;
-      break;
   };
 };
 
-// Death
 
-function death() {
+const death = () => {
   let bullets = document.querySelectorAll('.bullet');
   bullets.forEach((bullet) => bullet.parentNode.removeChild(bullet));
 
@@ -58,21 +52,20 @@ function death() {
   game();
 };
 
-// Game Over
 
-function gameOver() {
+const gameOver = () => {
   document.querySelector('.game-over').classList.add('on');
+  document.querySelector('.life').innerHTML = `<img src="images/heart-empty.png" class="life-img" alt="">`;
+  document.querySelector('.game-over-player-points').innerText = points;
 };
 
-// Random
 
-function random(min, max) {
+const random = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1) ) + min;
 };
 
-// Intervals
 
-function intervals() {
+const intervals = () => {
   interval.run = setInterval(() => {
     if (player.run) {
       switch (player.direction) {
@@ -222,7 +215,7 @@ function intervals() {
     };
 
     player.element = document.querySelector('.player');
-  }, 5000);
+  }, generateEnemySpeed);
 
   interval.enemyShot = setInterval(() => {
     let enemies = document.querySelectorAll('.enemy');
@@ -251,7 +244,7 @@ function intervals() {
     });
 
     player.element = document.querySelector('.player');
-  }, 3000);
+  }, enemyShotSpeed);
 
   interval.enemyBullet = setInterval(() => {
     let bullets = document.querySelectorAll('.enemy-bullet');
@@ -297,14 +290,28 @@ function intervals() {
           };
           break;
       };
+
+      let enemies = document.querySelectorAll('.enemy');
+      enemies.forEach((enemy) => {
+
+        if (
+          bullet.getBoundingClientRect().top < enemy.getBoundingClientRect().bottom &&
+          bullet.getBoundingClientRect().left < enemy.getBoundingClientRect().right &&
+          bullet.getBoundingClientRect().right > enemy.getBoundingClientRect().left &&
+          bullet.getBoundingClientRect().bottom > enemy.getBoundingClientRect().top
+        ) {
+          enemy.parentNode.removeChild(enemy);
+          bullet.parentNode.removeChild(bullet);
+        };
+
+      });
     });
   }, fps);
   
 };
 
-// Controllers
 
-function controllers() {
+const controllers = () => {
   document.addEventListener('keydown', (event) => {
     switch (event.keyCode) {
       case 87: //top
@@ -348,16 +355,13 @@ function controllers() {
   });
 };
 
-// Shot
 
-function shooting(event) {
-  console.log(event.keyCode);
-  if (event.keyCode == 32) {
-    shot();
-  };
+const shooting = (event) => {
+  if (event.keyCode == 32) shot();
 };
 
-function shot() {
+
+const shot = () => {
   switch (player.direction) {
     case 'top':
       gameZone.innerHTML += `<div class="bullet" direction="up" style="left: ${player.x + player.width/2 - bulletModel.width/2}px; top: ${player.y - bulletModel.height}px"></div>`;
@@ -375,18 +379,20 @@ function shot() {
   player.element = document.querySelector('.player');
 };
 
-// Start game
 
-function game() {
+const game = () => {
   init();
   controllers();
   intervals();
   document.addEventListener('keydown', shooting, false);
 };
 
+
 let gameZone = document.querySelector('.game-zone'),
   fps = 1000 / 60,
   points = 0,
+  generateEnemySpeed = 1000;
+  enemyShotSpeed = 2000;
   player = {
     styles: {
       top: 'images/tank-my-top.png',
@@ -399,7 +405,7 @@ let gameZone = document.querySelector('.game-zone'),
     y: null,
     speed: 10,
     run: false,
-    direction: top, // top, rihgt, bottom, left
+    direction: top,
     width: 80,
     height: 80,
     hitPoints: 2,
@@ -413,12 +419,12 @@ let gameZone = document.querySelector('.game-zone'),
     enemyBullet: null,
   },
   bulletModel = {
-   speed: 10,
+   speed: 15,
    width: 12,
    height: 12,
   },
   enemyModel = {
-    speed: 1,
+    speed: 4,
     width: 80,
     height: 80,
   };
