@@ -1,3 +1,11 @@
+const startButton = () => {
+  document.querySelector('.player-name').textContent = document.querySelector('.name-input').value;
+  document.querySelector('.start-panel').classList.remove('on');
+  document.querySelector('.start-button').classList.remove('on');
+  game();
+};
+
+
 const init = () => {
   if (player.hitPoints === 0) {
     player.hitPoints = 2;
@@ -391,8 +399,8 @@ const game = () => {
 let gameZone = document.querySelector('.game-zone'),
   fps = 1000 / 60,
   points = 0,
-  generateEnemySpeed = 1000;
-  enemyShotSpeed = 2000;
+  generateEnemySpeed = 1000,
+  enemyShotSpeed = 2000,
   player = {
     styles: {
       top: 'images/tank-my-top.png',
@@ -424,9 +432,9 @@ let gameZone = document.querySelector('.game-zone'),
    height: 12,
   },
   enemyModel = {
-    speed: 4,
+    speed: 3,
     width: 80,
     height: 80,
   };
 
-game();
+if (!document.querySelector('.start-button').classList.contains('on')) game();

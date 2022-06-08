@@ -40,6 +40,56 @@
   background-repeat: no-repeat;
 }
 
+.start-panel {
+  background: rgba(255, 255, 255, 0.67);
+  backdrop-filter: blur(3px);
+  opacity: 0;
+  font-family: Verdana;
+  font-size: 20px;
+  text-align: center;
+  visibility: hidden;
+  transition: 0.5s ease;
+  position: absolute;
+  height: 330px;
+  width: 500px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  padding: 40px;
+  border-radius: 5px;
+  z-index: 999;
+}
+
+.start-panel.on {
+  opacity: 1;
+  visibility: visible;
+  transition: 0.5s ease;
+}
+
+.game-name {
+  font-size: 40px;
+}
+
+.name-input {
+  padding: 10px 20px;
+  border: 2px solid #afafaf;
+  border-radius: 3px;
+  width: 90%;
+  font-family: Verdana;
+  font-size: 20px;
+}
+
+.start-button {
+  display: block;
+  padding: 10px;
+  border: 2px solid #036783;
+  cursor: pointer;
+  text-align: center;
+  margin-top: 20px;
+  border-radius: 5px;
+  text-transform: uppercase;
+}
+
 .panel-info {
   position: absolute;
   left: 10px;
@@ -55,7 +105,6 @@
   -webkit-text-fill-color: rgb(0, 0, 0);
   width: 100%;
   height: 100%;
-  width: 250px;
   padding: 20px;
   border: 2px solid #000;
   font-size: 25px;
@@ -79,7 +128,6 @@
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(8px);
   background-repeat: no-repeat;
-  background-size: cover;
   position: absolute;
   width: 100%;
   height: 100vh;
