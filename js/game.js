@@ -84,13 +84,13 @@ const intervals = () => {
           };
           break;
         case 'right':
-          if (player.x < gameZone.getBoundingClientRect().right - player.width - 6) {
+          if (player.x < gameZone.getBoundingClientRect().right - player.width - bulletModel.width / 2) {
             player.x += player.speed;
             player.element.style.left = `${player.x}px`;
           };
           break;
         case 'bottom':
-          if (player.y < gameZone.getBoundingClientRect().bottom - player.height - 7) {
+          if (player.y < gameZone.getBoundingClientRect().bottom - player.height - bulletModel.height / 2) {
            player.y += player.speed;
            player.element.style.top = `${player.y}px`; 
           };
@@ -134,14 +134,14 @@ const intervals = () => {
           };
           break;
         case 'right':
-          if (bullet.getBoundingClientRect().right > gameZone.getBoundingClientRect().width - 6) {
+          if (bullet.getBoundingClientRect().right > gameZone.getBoundingClientRect().width - bulletModel.width / 2) {
             bullet.parentNode.removeChild(bullet);
           } else {
             bullet.style.left = bullet.getBoundingClientRect().left + bulletModel.speed + 'px';
           };
           break;
         case 'down':
-          if (bullet.getBoundingClientRect().top > gameZone.getBoundingClientRect().height - 17) {
+          if (bullet.getBoundingClientRect().top > gameZone.getBoundingClientRect().height - bulletModel.height - bulletModel.height / 2) {
             bullet.parentNode.removeChild(bullet);
           } else {
             bullet.style.top = bullet.getBoundingClientRect().top + bulletModel.speed + 'px';
@@ -181,14 +181,14 @@ const intervals = () => {
           };
           break;
         case 'right':
-          if (enemy.getBoundingClientRect().right >= gameZone.getBoundingClientRect().width - 6) {
+          if (enemy.getBoundingClientRect().right >= gameZone.getBoundingClientRect().width) {
             enemy.parentNode.removeChild(enemy);
           } else {
             enemy.style.left = enemy.getBoundingClientRect().left + enemyModel.speed + 'px';
           };
           break;
         case 'bottom':
-          if (enemy.getBoundingClientRect().bottom >= gameZone.getBoundingClientRect().height - 6) {
+          if (enemy.getBoundingClientRect().bottom >= gameZone.getBoundingClientRect().height) {
             enemy.parentNode.removeChild(enemy);
           } else {
             enemy.style.top = enemy.getBoundingClientRect().top + enemyModel.speed + 'px';
@@ -237,16 +237,16 @@ const intervals = () => {
       let direction = enemy.getAttribute('direction');
       switch (direction) {
         case 'top':
-          gameZone.innerHTML += `<div class="enemy-bullet" direction="up" style="left: ${enemyX + enemyModel.width/2 - bulletModel.width/2}px; top: ${enemyY - bulletModel.height}px"></div>`;
+          gameZone.innerHTML += `<div class="enemy-bullet" direction="up" style="left: ${enemyX + enemyModel.width / 2 - bulletModel.width / 2}px; top: ${enemyY - bulletModel.height}px"></div>`;
           break;
         case 'right':
-          gameZone.innerHTML += `<div class="enemy-bullet" direction="right" style="left: ${enemyX + enemyModel.width}px; top: ${enemyY + enemyModel.height/2 - bulletModel.height/2}px"></div>`;
+          gameZone.innerHTML += `<div class="enemy-bullet" direction="right" style="left: ${enemyX + enemyModel.width}px; top: ${enemyY + enemyModel.height / 2 - bulletModel.height / 2}px"></div>`;
           break;
         case 'bottom':
-          gameZone.innerHTML += `<div class="enemy-bullet" direction="down" style="left: ${enemyX + enemyModel.width/2 - bulletModel.width/2}px; top: ${enemyY + enemyModel.width}px"></div>`;
+          gameZone.innerHTML += `<div class="enemy-bullet" direction="down" style="left: ${enemyX + enemyModel.width / 2 - bulletModel.width / 2}px; top: ${enemyY + enemyModel.width}px"></div>`;
           break;
         case 'left':
-          gameZone.innerHTML += `<div class="enemy-bullet" direction="left" style="left: ${enemyX - bulletModel.width}px; top: ${enemyY + enemyModel.height/2 - bulletModel.height/2}px"></div>`; 
+          gameZone.innerHTML += `<div class="enemy-bullet" direction="left" style="left: ${enemyX - bulletModel.width}px; top: ${enemyY + enemyModel.height/2 - bulletModel.height / 2}px"></div>`; 
           break;
       };
     });
@@ -277,14 +277,14 @@ const intervals = () => {
           };
           break;
         case 'right':
-          if (bullet.getBoundingClientRect().right > gameZone.getBoundingClientRect().width - 6) {
+          if (bullet.getBoundingClientRect().right > gameZone.getBoundingClientRect().width - bulletModel.width / 2) {
             bullet.parentNode.removeChild(bullet);
           } else {
             bullet.style.left = bullet.getBoundingClientRect().left + bulletModel.speed + 'px';
           };
           break;
         case 'down':
-          if (bullet.getBoundingClientRect().top > gameZone.getBoundingClientRect().height - 17) {
+          if (bullet.getBoundingClientRect().top > gameZone.getBoundingClientRect().height - bulletModel.height - bulletModel.height / 2) {
             bullet.parentNode.removeChild(bullet);
           } else {
             bullet.style.top = bullet.getBoundingClientRect().top + bulletModel.speed + 'px';
@@ -372,16 +372,16 @@ const shooting = (event) => {
 const shot = () => {
   switch (player.direction) {
     case 'top':
-      gameZone.innerHTML += `<div class="bullet" direction="up" style="left: ${player.x + player.width/2 - bulletModel.width/2}px; top: ${player.y - bulletModel.height}px"></div>`;
+      gameZone.innerHTML += `<div class="bullet" direction="up" style="left: ${player.x + player.width / 2 - bulletModel.width / 2}px; top: ${player.y - bulletModel.height}px"></div>`;
       break;
     case 'right':
-      gameZone.innerHTML += `<div class="bullet" direction="right" style="left: ${player.x + player.width}px; top: ${player.y + player.height/2 - bulletModel.height/2}px"></div>`;
+      gameZone.innerHTML += `<div class="bullet" direction="right" style="left: ${player.x + player.width}px; top: ${player.y + player.height / 2 - bulletModel.height / 2}px"></div>`;
       break;
     case 'bottom':
-      gameZone.innerHTML += `<div class="bullet" direction="down" style="left: ${player.x + player.width/2 - bulletModel.width/2}px; top: ${player.y + player.width}px"></div>`;
+      gameZone.innerHTML += `<div class="bullet" direction="down" style="left: ${player.x + player.width / 2 - bulletModel.width / 2}px; top: ${player.y + player.width}px"></div>`;
       break;
     case 'left':
-      gameZone.innerHTML += `<div class="bullet" direction="left" style="left: ${player.x - bulletModel.width}px; top: ${player.y + player.height/2 - bulletModel.height/2}px"></div>`;
+      gameZone.innerHTML += `<div class="bullet" direction="left" style="left: ${player.x - bulletModel.width}px; top: ${player.y + player.height / 2 - bulletModel.height / 2}px"></div>`;
       break;
   };
   player.element = document.querySelector('.player');
